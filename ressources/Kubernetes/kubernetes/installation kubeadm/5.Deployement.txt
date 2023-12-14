@@ -1,0 +1,61 @@
+#deployment example 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+
+#create a deployement
+kubectl create -f nginx-deploy.yaml
+#get deploy info
+kubectl get deploy -o wide
+#update deloyements info on the fly 1.9.1 instead of latest
+kubectl set image deployment/nginx-deployment nginx=nginx:1.9.1
+#verifiy and list the modifications
+kubectl rollout history deployment/nginx-deployment
+
+kubectl set image deployment/nginx-deployment nginx=nginx:1.9.1
+kubectl rollout history deployment/nginx-deployment
+kubectl describe deploy nginx-deployment | grep Image
+kubectl rollout undo deployment/nginx-deployment --to-revision=1
+kubectl describe deploy nginx-deployment | grep Image
+
+kubectl describe deploy nginx-deployment | grep Image
+
+#scale the deployement
+kubectl scale deployment nginx-deployment --replicas=5
+
+#auto scale the deployement [3 min - 6 max] pods
+kubectl autoscale deployment nginx-deployment --min=3 --max=6
+
+#delete the deployement 
+kubectl delete deploy nginx-deployment
+
+
+
+
+
+
+
+
+
+
+
+
+

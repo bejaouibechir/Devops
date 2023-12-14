@@ -1,0 +1,54 @@
+https://computingforgeeks.com/how-to-install-minikube-on-ubuntu-debian-linux/
+
+#Important jenkins must make part of docker group 
+sudo groupadd docker
+sudo usermod -aG docker ${USER}
+sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
+sudo chmod g+rwx "$HOME/.docker" -R
+
+#visudo ADD Jenkins and ubuntu to sudoers before
+
+
+sudo apt update
+sudo apt install apt-transport-https
+sudo apt upgrade
+
+wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+chmod +x minikube-linux-amd64
+sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+
+minikube version
+
+curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+
+chmod +x ./kubectl
+
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+
+#get the configuration in json foramt 
+kubectl version -o json  --client
+#start the minikube
+minikube start
+#view the cluster info
+kubectl cluster-info
+#View the kubectl configuration
+kubectl config view
+#delete the current nodes
+kubectl get nodes
+#stop the cluster
+ minikube stop
+#delete the cluster
+minikube delete
+
+#get dashboard
+minikube dashboard
+
+minikube dashboard --url
+
+
+
+
+
+
+

@@ -1,0 +1,14 @@
+
+#Force delete pv pvc 
+
+kubectl patch pv postgresql-pv -p '{"metadata":{"finalizers":null}}'
+kubectl patch pvc postgresql-pvc -p '{"metadata":{"finalizers":null}}'
+kubectl delete  pv postgresql-pv
+kubectl delete  pv postgresql-pvc
+helm uninstall postgresql-dev
+
+helm install postgresql-dev -f values.yaml bitnami/postgresql
+
+kubectl describe pod postgresql-dev-0
+
+kubectl describe pod psql-test-postgresql-0 

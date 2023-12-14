@@ -1,0 +1,41 @@
+clear
+    2  sudo hostnamectl  set-hostname  k8master
+    3  sudo add user jenkins
+    4  sudo adduser jenkins
+    5  clear
+    6  su - jenkins
+    7  clear
+    8  clear
+    9  docker --version
+   10  clear
+   11  sudo apt-get update && sudo apt-get upgrade
+   12  clear
+   13  sudo apt-get install docker.io -y
+   14  sudo systemctl enable docker
+   15  sudo usermod -aG docker $USER
+   16  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+   17  sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+   18  sudo apt list -a kubeadm
+   19  sudo apt install -y kubeadm=1.22.6-00 kubelet=1.22.6-00 kubectl=1.22.6-00
+   20  sudo apt-mark hold kubeadm kubelet kubectl
+   21  sudo cat <<EOF | sudo tee /etc/docker/daemon.json
+{ "exec-opts": ["native.cgroupdriver=systemd"],
+"log-driver": "json-file",
+"log-opts":
+{ "max-size": "100m" },
+"storage-driver": "overlay2"
+}
+EOF
+
+   22  sudo systemctl restart docker
+   24  sudo kubeadm init
+   25  mkdir -p $HOME/.kube
+   26  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   27  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   28  kubectl taint nodes --all node-role.kubernetes.io/master-
+   29  kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+   30  kubectl cluster-info
+   31  kubectl get nodes
+   32  kubectl get pod
+   33  kubectl get pod -n kubesystem
+   34  kubectl get pod -n kube-system

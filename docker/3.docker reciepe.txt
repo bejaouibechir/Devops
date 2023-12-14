@@ -1,0 +1,363 @@
+
+https://docs.docker.com/engine/reference/commandline/exec/
+
+-----------------Installation-------------------------
+
+#install docker 
+sudo apt update
+sudo apt install docker.io
+
+#start docker
+sudo systemctl start docker
+sudo systemctl enable docker
+
+#add current user to the docker group 
+groups ubuntu 
+sudo usermod -aG docker ubuntu
+
+
+----------------Images---------------------------------
+#search for images
+sudo docker search sqlserver
+sudo docker search httpd
+sudo docker search phpmyadmin
+
+
+#docker help command 
+docker image --help 
+
+#download pull an image the latest version
+docker pull httpd 
+
+#download pull an image a particular version
+docker pull httpd:2
+
+#list images 
+sudo docker images
+
+#delete image 
+sudo docker image rm httpd:2
+
+#delete not working images
+docker image prune -a
+
+#delete all images 
+docker rmi $(docker image ls -q)
+
+#force delete a particular image 
+docker rm - f image identifier
+
+#Delete image 
+docker rm identifier
+
+#delete all the images
+docker rmi $(docker image ls -q)
+
+--------------------Containers-------------------------------------------
+
+#List executing containers 
+docker ps 
+
+#List all containers 
+docker ps -a
+
+
+#Create a container from image
+docker run -itd --name hello_devops httpd:alpine
+
+#Start a container
+docker start| restart 
+# Options for starting
+-t : (Terminal) docker terminal ;
+-i : (interactive) ;
+-d : ( detached mode : background mode ) ;
+
+#Stop a container 
+docker stop 
+
+#execute a container 
+docker exec -ti container_name command 
+docker exec -ti m1 bash
+
+
+#remove notworking container 
+docker container prune
+
+
+#Show logs 
+docker logs --tail=20 aac2e2e63ff7 # display the last 20 lignes
+docker logs -f aac2e2e63ff7 # all logs
+
+#Show all info 
+docker inspect #identifier
+
+#Execute a container
+docker exec -tdi <container_name_here> 
+
+#delete all the containers 
+docker rm -f $(docker ps -a -q)
+
+#create a container and map ti to a port 
+
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=<your_password>' -p 1433:1433 --name sql_server_instance -d 
+mcr.microsoft.com/mssql/server:2019-latest
+
+docker exec -it sql_server_instance /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P <your_password>
+
+
+--------------------------------Network-----------------------------------------------------
+#install ping utility to test
+apt-get update -y
+apt-get install -y iputils-ping 
+
+#install ip utility to know the ip 
+apt install iproute2 -y
+
+#Display docker network 
+docker network ls
+
+#Inspect docker network bridge
+docker network inspect bridge
+
+#create a new network 
+docker network create --driver bridge vlan1
+
+#create a new network with a subnet and gateway
+docker network create vlan2 --subnet=192.168.10.0/24 --gateway=192.168.10.1
+
+#create a container with already given network
+docker run -d --name --network -p -v image name
+
+#connect a created and runed container to a network 
+docker network connect vlan1 srv1  
+
+#disconnect a created and runed container to a network 
+docker network disconnect vlan1 srv1  
+
+#delete a network
+docker network rm vlan1
+
+#delete unused networks
+docker network prune -f|--force # to force
+
+-------------------------Docker volume--------------------------------------------------
+
+#Create a volume 
+docker volume create --name data
+#List volumes 
+docker volume list
+
+
+-------------------------Docker file---------------------------------------------------------
+
+
+*******Exemple1: Image personnalisée nginx***********************************************************
+FROM nginx
+
+FROM nginx
+
+LABEL description = "Image personnalisée"
+
+COPY index.html /usr/share/nginx/html/
+
+WORKDIR /app
+
+*******Exemple2 FROM multiple***********************************************************
+
+FROM ubuntu AS linux
+
+# taper le reste des détails
+
+FROM nginx AS webserver
+
+# taper le reste des détails
+
+Exemple pour créer une image ubuntu 
+docker build -t myLinux --target linux . 
+
+Exemple pour créer une image nginx 
+docker build -t myLinux --target webserver . 
+
+*******Exemple 3 COPY vs ADD****************************************************************
+
+FROM ubuntu AS linux
+
+WORKDIR /app
+
+ARG filename  file.txt.tar.gz
+
+COPY ${filename} /app
+
+
+FROM ubuntu AS linux
+
+WORKDIR /app
+
+ARG filename  file.txt.tar.gz
+
+ADD ${filename} /app
+
+****Exemple 4 la commande CMD*************************************************************
+
+FROM ubuntu AS linux
+
+CMD ["ls", "-al"]
+ 
+CMD interrompe la continuité d'exécution  du conteneur
+docker logs conteneur
+                        ***************** CMD vs EntryPoint ********************
+
+#Dockerfile qui utilise ENTRYPOINT
+
+FROM  ubuntu as image-ep
+ENTRYPOINT ["echo","Hello"]
+CMD ["World"]
+
+
+#Dockerfile qui utilise CMD
+
+FROM  ubuntu as image-cmd
+CMD ["echo","Hello","World"]
+
+docker run imgep Bechir
+docker run imgcmd Bechir <- error
+
+#executer sans paramètres
+docker run imgep
+ou
+#ecraser carrément la commande
+docker run imgep ls -l
+
+
+***************Exemple d'application ngnix personnalisée ***************************
+
+<!doctype html>
+<html>
+ <body style="backgroud-color:rgb(49, 214, 220);"><center>
+    <head>
+     <title>Docker Project</title>
+    </head>
+    <body>
+     <p>Welcome to my Docker Project!<p>
+        <p>Today's Date and Time is: <span id='date-time'></span><p>
+        <script>
+             var dateAndTime = new Date();
+             document.getElementById('date-time').innerHTML=dateAndTime.toLocaleString();
+        </script>
+        </body>
+</html>
+
+
+FROM nginx
+
+COPY index.html /usr/share/nginx/html
+
+EXPOSE 8080
+
+
+
+
+
+***************Exemple application python avec flask**********************************
+
+app.py
+
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+	return "Hello World!"
+
+if __name__ == '__main__':
+	app.run(host='0.0.0.0', port=8000)
+
+requirements.txt
+flask
+
+
+FROM python
+
+WORKDIR /app
+
+COPY requirements.txt /app
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip3 install -r requirements.txt
+
+
+COPY app.py /app
+
+EXPOSE 8000
+
+ENTRYPOINT ["python3"]
+CMD ["app.py"]
+
+**************Example on github*****************************
+
+https://github.com/dockersamples/linux_tweet_app
+
+
+------------------------Docker compose--------------------------------------------------
+
+docker examples
+https://docs.docker.com/samples/
+https://docs.docker.com/samples/flask/
+
+
+
+-------------------------publish--------------------------------------------------------
+
+ #login to the hub
+ docker login -u "bechirbejaoui" -p "docker1234@"
+ #tag the image
+ docker tag myapp  bechirbejaoui/myapp:latest
+ #push the image 
+ docker push bechirbejaoui/myapp:latest
+
+
+
+
+-------------------------Buildah-------------------------------------------------------
+sudo apt install buildah
+
+    buildah --version or -v
+    buildah images
+    buildah containers
+    container1 =$(buildah from fedora)
+    echo $container1
+    buildah run $container1 bash
+    buildah run $container1 java
+    buildah run $container1 -- dnf -y install httpd
+    buildah run $container httpd
+    
+
+
+# Base on the most recently released Fedora
+FROM fedora:latest
+MAINTAINER ipbabble email buildahboy@redhat.com # not a real email
+
+# Install updates and httpd
+RUN echo "Updating all fedora packages"; dnf -y update; dnf -y clean all
+RUN echo "Installing httpd"; dnf -y install httpd && dnf -y clean all
+
+# Expose the default httpd port 80
+EXPOSE 80
+
+# Run the httpd
+CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
+
+buildah build -t fedora-http-server
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,47 @@
+#example of replicaset
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs
+  labels:
+    app: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+
+#create a replicaset 
+kubectl create -f nginx-rs.yaml
+#get replicaset info 
+kubectl get rs
+#get pods info 
+kubectl get po -o wide
+#scale the replicaset 
+kubectl scale --replicas=4 replicaset nginx-rs 
+#OR
+kubectl scale --replicas=4 -f nginx-rs.yaml
+#get the pods  repicat number
+kubectl get rs
+#generate the file form the rs
+kubectl edit rs nginx-rs
+#describe the replicaset
+kubectl describe rs nginx-rs
+#delete the replicat
+kubectl delete rs nginx-rs
+
+ 
+
+
+
+
+

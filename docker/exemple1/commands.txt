@@ -1,0 +1,1 @@
+docker run --name mysqlc -tdi -v data:/var/lib/mysql

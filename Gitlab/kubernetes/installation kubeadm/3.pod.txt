@@ -1,0 +1,54 @@
+#Get the info of all kibernetes objects
+kubectl api-resources
+
+#explain pod to extract some useful data
+kubectl explain pod
+
+#create a pod 
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    type: web
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+#create the pod 
+kubectl create -f nginx-pod.yaml
+#get all the pods
+kubectl get pods
+#add -o wide option to get more explanations
+kubectl get pods -o wide 
+
+#enter inside the pod
+kubectl -ti exec nginx sh
+bash
+
+#log the pod 
+kubectl logs nginx
+-f : suivre en permanence les logs du conteneur
+--tail : nombre de lignes les plus récentes à affiche
+--since=1h : afficher tous les logs du conteneur au cours de la dernière heure
+--timestamps : afficher la date et l'heure de réception des logs d'un conteneur.
+#delete the pod 
+kubectl delete pod nginx
+
+#After modification of the yaml you cann apply 
+Kubectl apply -f nginx-pod.yaml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,33 @@
+apt update
+    3  clear
+    4  sudo apt install docker.io
+    5  sudo systemctl enable docker
+    6  clear
+    7  systemctl statut docker
+    8  docker --version
+    9  clear
+   10  sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+   11  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+   12  cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   13  deb https://apt.kubernetes.io/ kubernetes-xenial main
+   14  EOF
+   15  apt update
+   16  sudo apt-get install -y kubelet kubeadm kubectl
+   17  clear
+   18  kubeadm init
+   19  clear
+   20  apt-get update
+   21  clear
+   22  sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+   23  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+   24  clear
+   25  cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+   26  sudo apt-get update
+   27  sudo apt-get install -y kubelet=1.20.4-00 kubeadm=1.20.4-00   kubectl=1.20.4-00
+   28  apt-get install -y kubelet=1.20.4-00 kubeadm=1.20.4-00   kubectl=1.20.4-00
+   29  sudo apt-mark hold kubelet kubeadm kubectl
+   
+         kubeadm join 172.31.47.9:6443 --token mv597j.kr2sqcp9h5by10xe     --discovery-token-ca-cert-hash sha256:451a1309dc451eb547ce90b8629739b8178a4c20753b7933849f30ed51516b61

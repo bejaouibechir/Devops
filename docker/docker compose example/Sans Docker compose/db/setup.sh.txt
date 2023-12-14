@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+chmod +x /mysql/script.sql
+mysql -u root -p test123++  < /mysql/script.sql

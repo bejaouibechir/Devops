@@ -1,0 +1,17 @@
+#ClusterIP service example
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  type: ClusterIP
+  selector:
+    app: myapp
+  ports:
+  - port: 5000
+    targetPort: 5000
+
+#get service 
+kubectl get svc
+ls
+

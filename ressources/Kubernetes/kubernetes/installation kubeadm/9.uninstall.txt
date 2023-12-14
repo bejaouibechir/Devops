@@ -1,0 +1,7 @@
+worker:
+
+kubeadm reset
+sudo apt-get purge kubeadm=1.20.4-00 kubectl=1.20.4-00 kubelet=1.20.4-00 kubernetes-cni  kube* 
+sudo apt-get autoremove -y
+
+
